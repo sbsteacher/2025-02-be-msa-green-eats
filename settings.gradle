@@ -1,0 +1,5 @@
+rootProject.name = 'green-eats-parent'
+include 'common-module'
+include 'gateway-service'
+include 'order-service'
+include 'store-service'

@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    gateway:
+      mvc:
+        cors:
+          # null처리
+          configurations: ~
+        routes:
+          - id: store-service
+            uri: lb://store-service
+            predicates:
+              - Path=/api/stores/**
+
+          - id: order-service
+            uri: lb://order-service
+            predicates:
+              - Path=/api/orders/**

@@ -1,0 +1,17 @@
+server:
+  port: 8082
+
+spring:
+  config:
+    import:
+      - optional:classpath:application-common.yml
+  application:
+    name: order-service
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://localhost:3306/greeneats_order?createDatabaseIfNotExist=true&characterEncoding=UTF-8
+    username: root
+    password: green502
+  jpa:
+    hibernate:
+      ddl-auto: update
