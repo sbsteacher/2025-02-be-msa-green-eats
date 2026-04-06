@@ -1,7 +1,17 @@
+server:
+  port: 8081
+
 spring:
+  config:
+    import:
+      - optional:classpath:application-common.yaml
+  application:
+    name: store-service
   datasource:
-    url: jdbc:mysql://localhost:3306/store_db?createDatabaseIfNotExist=true&characterEncoding=UTF-8
-    username: root
-    password: green502
-
-
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${STORE_DB_HOST}
+    username: ${STORE_DB_USERNAME}
+    password: ${STORE_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none

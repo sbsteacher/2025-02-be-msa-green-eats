@@ -1,14 +1,11 @@
 package com.green.eats.order.entity;
 
+import com.green.eats.order.application.model.OrderStatus;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import tools.jackson.databind.annotation.JsonSerialize;
-import tools.jackson.databind.ser.std.ToStringSerializer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +13,31 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name="orders")
 public class Order {
-    @Id
-    @Tsid
+    @Id @Tsid
     private Long id;
 
     private Long userId;
-    private long totalPrice;
-    private String status; // ORDERED, CANCELLED 등
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "order_id")
+    @Column(nullable = false)
+    private long totalPrice;
+
+    private OrderStatus status;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
+
+    // 편의 메서드: 주문 항목 추가 시 양방향 연결을 자동으로 처리
+    public void addOrderItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+        calculateTotalPrice();
+    }
+
+    private void calculateTotalPrice() {
+        this.totalPrice = items.stream()
+                .mapToLong(OrderItem::getTotalItemPrice)
+                .sum();
+    }
 }

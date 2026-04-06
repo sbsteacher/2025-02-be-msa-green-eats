@@ -1,10 +1,7 @@
 package com.green.eats.order.entity;
 
 import io.hypersistence.utils.hibernate.id.Tsid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -27,6 +24,10 @@ public class OrderItem {
 
     @Column(nullable = false)
     private int price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="order_id", nullable = false)
+    private Order order;
 
     // 편의를 위한 생성자
     public OrderItem(Long menuId, int quantity, int price) {

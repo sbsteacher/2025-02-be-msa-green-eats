@@ -1,0 +1,10 @@
+spring:
+  config:
+    import:
+      - optional:classpath:application-common.yml
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: null

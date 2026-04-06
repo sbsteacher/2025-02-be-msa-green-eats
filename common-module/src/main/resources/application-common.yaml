@@ -7,6 +7,8 @@ management:
   endpoint:
     health:
       show-details: always # 상세한 상태 정보 표시
+    env:
+      show-values: always
 
 server:
   tomcat:
@@ -17,3 +19,14 @@ spring:
   threads:
     virtual:
       enabled: true
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50 # 배치작업 크기 설정
+        format_sql: true # 쿼리문 보기편하게 포맷팅
+        order_updates: true # JPA Batch 작업 활성화
+    show-sql: true # JPA가 쿼리문 로그에 출력
+  jackson:
+    default-property-inclusion: non_null
