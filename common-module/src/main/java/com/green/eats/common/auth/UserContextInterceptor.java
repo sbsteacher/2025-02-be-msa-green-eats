@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class UserContextInterceptor implements HandlerInterceptor {
     @Override
@@ -15,7 +18,13 @@ public class UserContextInterceptor implements HandlerInterceptor {
         String userName = request.getHeader("X-User-Name");
 
         if (userId != null && userName != null) {
-            UserContext.set(new UserDto(Long.parseLong(userId), userName));
+            try {
+                String decodedUserName = URLDecoder.decode(userName, StandardCharsets.UTF_8);
+                UserContext.set(new UserDto(Long.parseLong(userId), decodedUserName));
+            } catch (Exception e) {
+                // 디코딩 실패 시 원본 사용 (또는 무시)
+                UserContext.set(new UserDto(Long.parseLong(userId), userName));
+            }
         }
         return true;
     }

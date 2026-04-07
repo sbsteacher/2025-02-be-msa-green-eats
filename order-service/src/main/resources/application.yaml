@@ -2,17 +2,18 @@ server:
   port: 8082
 
 spring:
+  application:
+    name: order-service
   config:
     import:
       - optional:classpath:application-common.yaml
-  application:
-    name: order-service
+      - optional:classpath:application-auth-prod.yaml
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: ${ORDER_DB_HOST:jdbc:log4jdbc:mysql://localhost:3306/greeneats_order?createDatabaseIfNotExist=true&characterEncoding=UTF-8}
-    username: ${ORDER_DB_USERNAME:root}
-    password: ${ORDER_DB_PASSWORD:green502}
+    url: jdbc:log4jdbc:mysql://localhost:3306/greeneats_order?createDatabaseIfNotExist=true&characterEncoding=UTF-8
+    username: root
+    password: green502
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 

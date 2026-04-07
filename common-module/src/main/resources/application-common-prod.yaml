@@ -1,0 +1,27 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        # 1. 모든 엔드포인트 노출을 차단하고 health, info만 허용 (빈 문자열 "" 입력 시 전체 차단)
+        include: "health,info"
+        # 또는 전체를 확실히 막고 싶다면 아래와 같이 작성합니다.
+        # include: ""
+  endpoint:
+    health:
+      # 2. 상세 정보(DB 연결 상태 등)를 숨기고 단순히 UP/DOWN만 표시
+      show-details: never
+    env:
+      # 3. 환경변수 값 노출을 완전히 차단
+      show-values: never
+
+server:
+  tomcat:
+    threads:
+      max: 200
+
+spring:
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    default-property-inclusion: non_null

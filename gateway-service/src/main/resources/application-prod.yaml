@@ -1,17 +1,38 @@
 spring:
+  application:
+    name: gateway-service
+  config:
+    import:
+      - optional:classpath:application-common-prod.yaml
+      - optional:classpath:application-auth-prod.yaml
   cloud:
     gateway:
       mvc:
         cors:
-          # null처리
-          configurations: ~
+          configurations:
+            '[/**]':
+              allowed-origins:
+                - "http://localhost:5173"
+              allowed-methods:
+                - "GET"
+                - "POST"
+                - "PUT"
+                - "DELETE"
+                - "OPTIONS"
+              allowed-headers:
+                - "*"
+              allow-credentials: true
+              max-age: 3600
         routes:
+          - id: user-service
+            uri: lb://user-service
+            predicates:
+              - Path=/api/user/**
           - id: store-service
             uri: lb://store-service
             predicates:
-              - Path=/api/stores/**
-
+              - Path=/api/store/**
           - id: order-service
             uri: lb://order-service
             predicates:
-              - Path=/api/orders/**
+              - Path=/api/order/**

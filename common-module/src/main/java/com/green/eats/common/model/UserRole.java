@@ -1,6 +1,8 @@
 package com.green.eats.common.model;
 
+import com.green.eats.common.enumcode.AbstractEnumCodeConverter;
 import com.green.eats.common.enumcode.EnumMapperType;
+import jakarta.persistence.Converter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,4 +14,9 @@ public enum UserRole implements EnumMapperType {
     ;
     private final String code;
     private final String value;
+
+    @Converter(autoApply = true)
+    public static class CodeConverter extends AbstractEnumCodeConverter<UserRole> {
+        public CodeConverter() { super(UserRole.class, false); }
+    }
 }

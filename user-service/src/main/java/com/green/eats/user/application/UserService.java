@@ -1,5 +1,6 @@
 package com.green.eats.user.application;
 
+import com.green.eats.common.model.UserRole;
 import com.green.eats.user.application.model.UserSigninReq;
 import com.green.eats.user.application.model.UserSignupReq;
 import com.green.eats.user.entity.User;
@@ -26,6 +27,7 @@ public class UserService {
         newUser.setEmail( req.getEmail() );
         newUser.setPassword( hashedPw );
         newUser.setName( req.getName() );
+        newUser.setRole( UserRole.USER );
         userRepository.save(newUser);
     }
 

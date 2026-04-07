@@ -1,24 +1,39 @@
+management:
+  endpoint:
+    gateway:
+      enabled: true
+
+
 spring:
-  config:
-    import:
-      - optional:classpath:application-common.yml
   application:
     name: gateway-service
+  config:
+    import:
+      - optional:classpath:application-common.yaml
+      - optional:classpath:application-auth-prod.yaml
   cloud:
     gateway:
+      # 4.0.x 버전 Servlet Gateway의 핵심 설정 프리픽스
       server:
-        # MVC 게이트웨이 전용 CORS 설정
         webmvc:
+          actuator:
+            enabled: true
           cors:
             configurations:
               '[/**]':
-                allowedOrigins: "http://localhost:5173"
-                allowedMethods: "*"
-                allowedHeaders: "*"
-                allowCredentials: true
+                allowed-origins: [ "http://localhost:5173" ]
+                allowed-methods: [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ]
+                allowed-headers: [ "*" ]
+                allow-credentials: true
+                max-age: 3600
 
           # 라우팅 설정
           routes:
+            - id: user-service
+              uri: http://localhost:8080 # User Service 실제 포트 확인 필수
+              predicates:
+                - Path=/api/user/**
+
             - id: store-service
               uri: http://localhost:8081
               predicates:
@@ -28,5 +43,6 @@ spring:
               uri: http://localhost:8082
               predicates:
                 - Path=/api/order/**
+
 server:
   port: 8000

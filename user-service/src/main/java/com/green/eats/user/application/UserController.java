@@ -1,12 +1,14 @@
 package com.green.eats.user.application;
 
-import com.green.eats.common.auth.JwtTokenManager;
+
 import com.green.eats.common.model.JwtUser;
 import com.green.eats.common.model.ResultResponse;
+import com.green.eats.common.security.JwtTokenManager;
 import com.green.eats.user.application.model.UserSigninReq;
 import com.green.eats.user.application.model.UserSigninRes;
 import com.green.eats.user.application.model.UserSignupReq;
 import com.green.eats.user.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResultResponse<?> signup(@RequestBody UserSignupReq req) {
+        log.info("req: {}", req);
         userService.signup(req);
         return ResultResponse.builder()
                 .resultMessage("회원가입 성공")
@@ -37,7 +40,7 @@ public class UserController {
         User signedUser = userService.signin(dto);
 
         //보안 쿠키 처리
-        JwtUser jwtUser = new JwtUser( signedUser.getId(), signedUser.getRole() );
+        JwtUser jwtUser = new JwtUser( signedUser.getId(), signedUser.getName(), signedUser.getRole() );
         jwtTokenManager.issue(res, jwtUser);
 
         UserSigninRes userSigninRes = UserSigninRes.builder()
@@ -49,5 +52,17 @@ public class UserController {
                 .resultMessage("로그인 성공")
                 .resultData(userSigninRes)
                 .build();
+    }
+
+    @PostMapping("/signout")
+    public ResultResponse<?> signOut(HttpServletResponse res) {
+        jwtTokenManager.signOut(res);
+        return new ResultResponse<>("로그아웃 성공", 1);
+    }
+
+    @PostMapping("/reissue")
+    public ResultResponse<?> reissue(HttpServletResponse res, HttpServletRequest req) {
+        jwtTokenManager.reissue(req, res);
+        return new ResultResponse<>("AT 재발행", null);
     }
 }
