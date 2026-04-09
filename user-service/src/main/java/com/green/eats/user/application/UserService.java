@@ -1,5 +1,6 @@
 package com.green.eats.user.application;
 
+import com.green.eats.common.event.UserEvent;
 import com.green.eats.common.model.UserRole;
 import com.green.eats.user.application.model.UserSigninReq;
 import com.green.eats.user.application.model.UserSignupReq;
@@ -7,6 +8,7 @@ import com.green.eats.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final KafkaTemplate<String, UserEvent> kafkaTemplate;
 
     public void signup(UserSignupReq req) {
         String hashedPw = passwordEncoder.encode( req.getPassword() );
@@ -29,6 +32,10 @@ public class UserService {
         newUser.setName( req.getName() );
         newUser.setRole( UserRole.USER );
         userRepository.save(newUser);
+
+        // Kafka로 회원가입 이벤트 발행
+        UserEvent event = new UserEvent(newUser.getId(), newUser.getName(), "CREATE");
+        kafkaTemplate.send("user-topic", String.valueOf(newUser.getId()), event);
     }
 
     public User signin(UserSigninReq req) {

@@ -18,6 +18,9 @@ public class OrderItem {
     @Column(nullable = false)
     private Long menuId;
 
+    @Column(nullable = false)
+    private String menuName;
+
     // 주문 수량
     @Column(nullable = false)
     private int quantity;
